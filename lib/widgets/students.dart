@@ -3,7 +3,7 @@ import '../models/student.dart';
 import 'student_item.dart';
 
 class StudentsScreen extends StatelessWidget {
-  // Тут наш список студентов
+
   final List<Students> students = [
   Students(
     FirstName : 'Олексій',
