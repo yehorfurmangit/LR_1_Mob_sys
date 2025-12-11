@@ -1,23 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart'; 
 import '../models/student.dart';
+import '../models/department.dart'; 
 
 class StudentItem extends StatelessWidget {
   final Students student;
-  final Function()? onTap; 
+  final Function()? onTap;
 
   const StudentItem({
-    super.key, 
-    required this.student, 
-    this.onTap, 
+    super.key,
+    required this.student,
+    this.onTap,
   });
 
-@override
+  @override
   Widget build(BuildContext context) {
+    final department = availableDepartments.firstWhere(
+      (dept) => dept.id == student.departmentId,
+      orElse: () => availableDepartments[0],
+    );
+
     final Color bgColor =
         student.gender == Gender.male ? Colors.blue[100]! : Colors.pink[100]!;
 
     return InkWell(
-      onTap: onTap, 
+      onTap: onTap,
       splashColor: Colors.black12,
       borderRadius: BorderRadius.circular(10),
       child: Container(
@@ -34,17 +41,26 @@ class StudentItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${student.FirstName} ${student.LastName}',
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                  '${student.firstName} ${student.lastName}',
+                  style: GoogleFonts.lato(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-                Text('Оцінка: ${student.grade}'),
+                Text(
+                  'Оцінка: ${student.grade}',
+                  style: GoogleFonts.lato(
+                    fontSize: 14,
+                    color: Colors.black54,
+                  ),
+                ),
               ],
             ),
             Icon(
-              workicon[student.department],
+              department.icon, 
               size: 30,
-              color: Colors.black54,
+              color: department.color, 
             ),
           ],
         ),

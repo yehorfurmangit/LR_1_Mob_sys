@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import '../models/student.dart';
+import '../models/department.dart';
 
 class OknoNewStudent extends StatefulWidget {
   final Function(Students) onAddStudent;
   final Students? studentToEdit;
 
   const OknoNewStudent({
-    super.key, 
-    required this.onAddStudent, 
+    super.key,
+    required this.onAddStudent,
     this.studentToEdit,
   });
 
@@ -20,17 +21,21 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
   final _lastNameController = TextEditingController();
   final _gradeController = TextEditingController();
 
-  Department _selectedDepartment = Department.finance;
-  Gender _selectedGender = Gender.male; 
-  
-@override
+  Department _selectedDepartment = availableDepartments[0];
+  Gender _selectedGender = Gender.male;
+
+  @override
   void initState() {
     super.initState();
     if (widget.studentToEdit != null) {
-      _firstNameController.text = widget.studentToEdit!.FirstName;
-      _lastNameController.text = widget.studentToEdit!.LastName;
+      _firstNameController.text = widget.studentToEdit!.firstName;
+      _lastNameController.text = widget.studentToEdit!.lastName;
       _gradeController.text = widget.studentToEdit!.grade.toString();
-      _selectedDepartment = widget.studentToEdit!.department;
+      
+      _selectedDepartment = availableDepartments.firstWhere(
+        (dept) => dept.id == widget.studentToEdit!.departmentId,
+        orElse: () => availableDepartments[0],
+      );
       _selectedGender = widget.studentToEdit!.gender;
     }
   }
@@ -49,11 +54,11 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
 
     widget.onAddStudent(
       Students(
-        FirstName: enteredFirstName,
-        LastName: enteredLastName,
-        department: _selectedDepartment,
+        firstName: enteredFirstName,
+        lastName: enteredLastName,
+        departmentId: _selectedDepartment.id,
         grade: enteredGrade,
-        gender: _selectedGender, 
+        gender: _selectedGender,
       ),
     );
     Navigator.of(context).pop();
@@ -70,6 +75,7 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.studentToEdit != null;
+    
     return Padding(
       padding: EdgeInsets.only(
         top: 10,
@@ -78,7 +84,7 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
         bottom: MediaQuery.of(context).viewInsets.bottom + 10,
       ),
       child: Column(
-        mainAxisSize: MainAxisSize.min, 
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
@@ -87,12 +93,10 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 10),
-
           TextField(
             controller: _firstNameController,
             decoration: const InputDecoration(labelText: 'Ім`я'),
           ),
-
           TextField(
             controller: _lastNameController,
             decoration: const InputDecoration(labelText: 'Прізвище'),
@@ -103,20 +107,26 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
             keyboardType: TextInputType.number,
           ),
           const SizedBox(height: 10),
-
+          
           DropdownButton<Department>(
             value: _selectedDepartment,
             isExpanded: true,
-            onChanged: (new_Value) {
-              if (new_Value == null) return;
+            onChanged: (newValue) {
+              if (newValue == null) return;
               setState(() {
-                _selectedDepartment = new_Value;
+                _selectedDepartment = newValue;
               });
             },
-            items: Department.values.map((department) {
+            items: availableDepartments.map((department) {
               return DropdownMenuItem(
                 value: department,
-                child: Text(department.name),
+                child: Row(
+                  children: [
+                    Icon(department.icon, color: department.color),
+                    const SizedBox(width: 10),
+                    Text(department.name),
+                  ],
+                ),
               );
             }).toList(),
           ),
@@ -124,16 +134,16 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
           DropdownButton<Gender>(
             value: _selectedGender,
             isExpanded: true,
-            onChanged: (new_Value) {
-              if (new_Value == null) return;
+            onChanged: (newValue) {
+              if (newValue == null) return;
               setState(() {
-                _selectedGender = new_Value;
+                _selectedGender = newValue;
               });
             },
             items: Gender.values.map((gender) {
               return DropdownMenuItem(
                 value: gender,
-                child: Text(gender.name),
+                child: Text(gender.name.toUpperCase()),
               );
             }).toList(),
           ),
