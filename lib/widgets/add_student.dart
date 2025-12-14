@@ -54,6 +54,7 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
 
     widget.onAddStudent(
       Students(
+        id: '', 
         firstName: enteredFirstName,
         lastName: enteredLastName,
         departmentId: _selectedDepartment.id,
@@ -130,7 +131,7 @@ class _OknoNewStudentState extends State<OknoNewStudent> {
               );
             }).toList(),
           ),
-
+          
           DropdownButton<Gender>(
             value: _selectedGender,
             isExpanded: true,
